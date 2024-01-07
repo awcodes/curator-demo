@@ -1,5 +1,5 @@
 @php
-    $post = \App\Models\Post::first();
+    $post = \App\Models\Post::where('slug', 'with-svg')->sole();
 @endphp
 
 <!DOCTYPE html>
