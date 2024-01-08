@@ -5,11 +5,7 @@ namespace Database\Seeders;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
-use Ramsey\Uuid\Uuid;
-use function Awcodes\Curator\is_media_resizable;
 
 class MediaSeeder extends Seeder
 {
@@ -22,51 +18,35 @@ class MediaSeeder extends Seeder
      */
     public function run(): void
     {
-        Storage::disk('public')->deleteDirectory('media');
+        $this->cleanStorage();
 
-        $faker = (new \Faker\Factory)->create();
-        $files = File::files(database_path() . '/seeders/fixtures/');
-
-        if ($files) {
-            foreach ($files as $file) {
-
-                $image = Image::make($file->getRealPath());
-
-                if (is_media_resizable($image->extension)) {
-                    $width = $image->getWidth();
-                    $height = $image->getHeight();
-                }
-
-                $filename = Uuid::uuid4()->toString();
-
-                $media = Media::create(array_merge([
-                    'disk' => config('curator.disk'),
-                    'directory' => config('curator.directory'),
-                    'name' => $filename,
-                    'path' => config('curator.directory') . '/' . $filename . '.' . $image->extension,
-                    'width' => $width ?? null,
-                    'height' => $height ?? null,
-                    'size' => $image->filesize(),
-                    'type' => $image->mime(),
-                    'ext' => $image->extension,
-                    'alt' => $faker->words(rand(3,5), true),
-                ], $this->getRandomTimestamps()));
-
-                Storage::disk(config('curator.disk'))->put($media->path, $image->encode(null, '80'));
-            }
-        }
+        Media::factory(3)->directory('videos')->type('video')->create();
+        Media::factory(10)->directory('pdfs')->type('pdf')->create();
+        Media::factory(10)->directory('svgs')->type('svg')->create();
+        Media::factory(20)->directory('featured-images')->create();
+        Media::factory(20)->directory('product-images')->create();
+        Media::factory(20)->directory('product-pictures')->create();
+        Media::factory(20)->directory('products')->create();
+        Media::factory(10)->directory('authors')->create();
+        Media::factory(2)->directory('media/nested')->create();
+        Media::factory(2)->directory('media/nested/nested')->create();
+        Media::factory(10)->create();
     }
 
-    function getRandomTimestamps($backwardDays = -800): array
+    protected function cleanStorage(): void
     {
-        $backwardCreatedDays = rand($backwardDays, 0);
-        $backwardUpdatedDays = rand($backwardCreatedDays + 1, 0);
+        $directories = Storage::disk("public")->allDirectories();
 
-        return [
-            'created_at' => \Carbon\Carbon::now()->addDays($backwardCreatedDays)->addMinutes(rand(0,
-                60 * 23))->addSeconds(rand(0, 60)),
-            'updated_at' => \Carbon\Carbon::now()->addDays($backwardUpdatedDays)->addMinutes(rand(0,
-                60 * 23))->addSeconds(rand(0, 60))
-        ];
+        collect($directories)->each(function ($dir) {
+            Storage::disk("public")->deleteDirectory($dir);
+        });
+
+        $files = Storage::disk("public")->allFiles();
+
+        collect($files)->each(function ($file) {
+            if ($file !== ".gitignore") {
+                Storage::disk("public")->delete($file);
+            }
+        });
     }
 }

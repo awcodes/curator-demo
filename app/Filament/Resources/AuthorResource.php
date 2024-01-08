@@ -26,7 +26,8 @@ class AuthorResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required(),
-                CuratorPicker::make('avatar_id'),
+                CuratorPicker::make('avatar_id')
+                    ->directory('authors'),
             ]);
     }
 

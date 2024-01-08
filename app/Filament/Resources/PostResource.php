@@ -45,17 +45,13 @@ class PostResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->label('Slug')
                     ->required(),
-                Forms\Components\Actions::make([
-                    Forms\Components\Actions\Action::make('test_in_modal')
-                        ->form([
-                            CuratorPicker::make('model_picker')
-                        ])
-                ]),
                 CuratorPicker::make('featured_image_id')
                     ->relationship('featured_image', 'id'),
                 CuratorPicker::make('product_images')
+                    ->directory('product-images')
                     ->multiple(),
                 CuratorPicker::make('product_picture_ids')
+                    ->directory('product-pictures')
                     ->columnSpanFull()
                     ->multiple()
                     ->lazyLoad()
@@ -68,6 +64,7 @@ class PostResource extends Resource
                             ->label('Name')
                             ->required(),
                         CuratorPicker::make('image')
+                            ->directory('products')
                             ->lazyLoad(),
                     ]),
             ]);

@@ -25,7 +25,12 @@ class DatabaseSeeder extends Seeder
         $this->call(MediaSeeder::class);
 
          \App\Models\Post::factory(50)->create()->each(function($post) {
-             $post->product_pictures()->attach(Media::query()->inRandomOrder()->limit(rand(3,10))->pluck('id')->toArray());
+             $post->product_pictures()->attach(Media::query()
+                 ->where('directory', 'product-pictures')
+                 ->inRandomOrder()
+                 ->limit(mt_rand(3,10))
+                 ->pluck('id')
+                 ->toArray());
          });
     }
 }

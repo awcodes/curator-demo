@@ -24,7 +24,7 @@ return [
     'curation_presets' => [
         \Awcodes\Curator\Curations\ThumbnailPreset::class,
     ],
-    'directory' => 'media',
+    'directory' => null,
     'disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
     'glide' => [
         'server' => \Awcodes\Curator\Glide\DefaultServerFactory::class,
@@ -37,7 +37,7 @@ return [
     'image_resize_mode' => null,
     'image_resize_target_height' => null,
     'image_resize_target_width' => null,
-    'is_limited_to_directory' => false,
+    'is_limited_to_directory' => true,
     'is_tenant_aware' => true,
     'max_size' => 5000,
     'max_width' => 2000,

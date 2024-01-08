@@ -16,16 +16,34 @@ class PostFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'slug' => $this->faker->slug,
-            'featured_image_id' => Media::query()->inRandomOrder()->first()->id,
-            'product_images' => Media::query()->inRandomOrder()->limit(rand(3,10))->pluck('id')->toArray(),
+            'featured_image_id' => Media::query()
+                ->where('directory', 'featured-images')
+                ->inRandomOrder()
+                ->first()
+                ->id,
+            'product_images' => Media::query()
+                ->where('directory', 'product-images')
+                ->inRandomOrder()
+                ->limit(mt_rand(3,10))
+                ->pluck('id')
+                ->toArray(),
             'products' => [
                 [
                     'name' => $this->faker->word,
-                    'image' => Media::query()->inRandomOrder()->limit(rand(3,10))->pluck('id')->toArray(),
+                    'image' => Media::query()
+                        ->where('directory', 'products')
+                        ->inRandomOrder()
+                        ->limit(mt_rand(3,10))
+                        ->pluck('id')
+                        ->toArray(),
                 ],
                 [
                     'name' => $this->faker->word,
-                    'image' => Media::query()->inRandomOrder()->first()->id,
+                    'image' => Media::query()
+                        ->where('directory', 'products')
+                        ->inRandomOrder()
+                        ->first()
+                        ->id,
                 ],
             ],
             'content' => null,

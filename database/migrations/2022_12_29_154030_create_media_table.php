@@ -12,7 +12,8 @@ return new class extends Migration
         Schema::create(app(Media::class)->getTable(), function (Blueprint $table) {
             $table->id();
             $table->string('disk')->default('public');
-            $table->string('directory')->default('media');
+            $table->string('directory')->nullable();
+            $table->string('visibility')->default('public');
             $table->string('name');
             $table->string('path');
             $table->unsignedInteger('width')->nullable();
